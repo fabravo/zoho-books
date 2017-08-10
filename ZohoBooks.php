@@ -45,6 +45,7 @@ class ZohoBooks
 	private $contactsUrl = 'contacts/';
 	private $invoicesUrl = 'invoices/';
 	private $creditnotesUrl = 'creditnotes/';
+	private $timeentriesUrl = 'projects/timeentries/';
 
 	
 
@@ -215,7 +216,7 @@ class ZohoBooks
 	 *
 	 * @return (string) json string || false
 	 */
-	public function allCreditNotes($config = array())
+	public function allCreditNotes($config)
 	{
 		$url = $this->apiUrl . $this->creditnotesUrl . '?authtoken=' . $this->authtoken . '&organization_id=' . $this->organizationId;
 		if(isset($config['date_start']) && isset($config['date_end'])) {
@@ -295,6 +296,51 @@ class ZohoBooks
 		$this->checkApiRequestsLimit();
 
 		return $this->httpCode == 201 ? true : false;
+	}
+
+
+	/**
+	 * Get all time entries
+	 * https://www.zoho.com/books/api/v3/#Time-Entries_List_time_entries.
+	 *
+	 * @param (date) date start
+	 * @param (date) date end
+	 * @param (filter_by) list of filters
+	 * @param (sort_column) list of sort_columns
+	 *
+	 * @return (string) json string || false
+	 */
+	public function allTimeEntries($config)
+	{
+		//echo "<pre>";
+		//print_r($config);
+		//echo "</pre>";
+		//die();
+		$url = $this->apiUrl . $this->timeentriesUrl . '?authtoken=' . $this->authtoken . '&organization_id=' . $this->organizationId;
+		if(isset($config['date_start']) && isset($config['date_end'])) {
+			$url .= '&date_start=' . $config['date_start'] . '&date_end=' . $config['date_end'];
+		}
+		if(isset($config['filter_by'])) {
+			$url .= '&filter_by=' . $config['filter_by'];
+		}
+		if(isset($config['sort_column'])) {
+			$url .= '&sort_column=' . $config['sort_column'];
+		}
+		if(isset($config['page'])) {
+			$url .= '&page=' . $config['page'];
+		}
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($ch, CURLOPT_TIMEOUT, $this->timeout);
+		curl_setopt($ch, CURLOPT_HTTPHEADER, array("Content-Type: application/json"));
+		$timeentries = curl_exec($ch);
+		$this->httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+		curl_close($ch);
+
+		$this->checkApiRequestsLimit();
+
+		return $this->httpCode == 200 ? $timeentries : false;
 	}
 
 
