@@ -3,7 +3,9 @@ Zoho Books API
 
 ## Zoho Books API requests limit
 
-At the time of writing, the API requests limit is 150 requests per minute per organization
+At the time of writing, the API requests limit is:
+     Paid Organization - 2500 API calls/day and 100 API calls/minute
+     Free Organization - 1000 API calls/day and 100 API calls/minute
 
 
 ## Init
